@@ -5,41 +5,46 @@ class View(ft.UserControl):
     def __init__(self, page: ft.Page):
         super().__init__()
         # page stuff
+        self._btnAn = None
+        self._btnTop = None
+        self._retailerDD = None
+        self._brandDD = None
+        self._yearDD = None
         self._page = page
-        self._page.title = "Template application using MVC and DAO"
+        self._page.title = "Lab06"
         self._page.horizontal_alignment = 'CENTER'
-        self._page.theme_mode = ft.ThemeMode.DARK
+        self._page.theme_mode = ft.ThemeMode.LIGHT
         # controller (it is not initialized. Must be initialized in the main, after the controller is created)
         self._controller = None
         # graphical elements
         self._title = None
-        self.txt_name = None
-        self.btn_hello = None
         self.txt_result = None
-        self.txt_container = None
 
     def load_interface(self):
         # title
-        self._title = ft.Text("Hello World", color="blue", size=24)
+        self._title = ft.Text("Analizza Vendite", color="blue", size=24)
         self._page.controls.append(self._title)
 
-        #ROW with some controls
-        # text field for the name
-        self.txt_name = ft.TextField(
-            label="name",
-            width=200,
-            hint_text="Insert a your name"
-        )
+        self._yearDD = ft.Dropdown(label="anno", width = 150, options = [ft.dropdown.Option("nessun filtro")])
+        self._brandDD = ft.Dropdown(label="Brand", width = 150, options = [ft.dropdown.Option("nessun filtro")])
+        self._retailerDD = ft.Dropdown(label="Retailer", width = 350, options = [ft.dropdown.Option("nessun filtro")])
 
-        # button for the "hello" reply
-        self.btn_hello = ft.ElevatedButton(text="Hello", on_click=self._controller.handle_hello)
-        row1 = ft.Row([self.txt_name, self.btn_hello],
-                      alignment=ft.MainAxisAlignment.CENTER)
-        self._page.controls.append(row1)
+        self._controller.fill_year()
+        self._controller.fill_brand()
+        self._controller.fill_retailer()
+        
+        self._btnTop = ft.ElevatedButton(text="Top Vendite", width = 200, on_click=self._controller.handle_vendite)
+        self._btnAn = ft.ElevatedButton(text="Analizza Vendite", width = 200, on_click=self._controller.handle_analizza_vendite)
 
-        # List View where the reply is printed
         self.txt_result = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
-        self._page.controls.append(self.txt_result)
+        
+        
+        row1 = ft.Row([self._yearDD, self._brandDD, self._retailerDD], alignment=ft.MainAxisAlignment.CENTER)
+        row2 = ft.Row([self._btnTop, self._btnAn], alignment=ft.MainAxisAlignment.CENTER)
+        
+        self._page.add(row1, row2, self.txt_result)
+        
+
         self._page.update()
 
     @property
